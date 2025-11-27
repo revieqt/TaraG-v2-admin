@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { BACKEND_URL } from '@/constants/Config';
 
-export default function Ads() {
+export default function Revenue() {
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const primaryColor = useThemeColor({}, "primary");

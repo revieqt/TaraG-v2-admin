@@ -8,6 +8,7 @@ import {
   MdDashboard,
   MdPeople,
   MdCellTower,
+  MdMonetizationOn,
 } from 'react-icons/md';
 
 interface NavItem {
@@ -31,7 +32,7 @@ const NavBar: React.FC = () => {
     { label: 'Dashboard', path: '/', icon: MdDashboard },
     { label: 'Users', path: '/users', icon: MdPeople },
     { label: 'Alerts', path: '/alerts', icon: MdCellTower },
-    { label: 'Ad Revenue', path: '/ads', icon: MdCellTower },
+    { label: 'Revenue', path: '/revenue', icon: MdMonetizationOn },
   ];
 
   const isActive = (path: string) => location.pathname === path;

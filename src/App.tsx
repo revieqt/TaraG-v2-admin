@@ -10,7 +10,7 @@ import Dashboard from "./pages/main/Dashboard";
 import Users from "./pages/main/Users";
 import Profile from "./pages/main/Profile";
 import Alerts from "./pages/alerts/Alerts";
-import Ads from "./pages/ads/Ads";
+import Revenue from "./pages/revenue/Revenue";
 
 const App = () => {
   const { session, loading } = useSession();
@@ -50,7 +50,7 @@ const App = () => {
         <Route path="/users" element={<Users />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/alerts" element={<Alerts />} />
-        <Route path="/ads" element={<Ads />} />
+        <Route path="/revenue" element={<Revenue />} />
         {/* Add more protected pages here */}
       </Route>
 
