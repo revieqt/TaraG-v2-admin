@@ -9,6 +9,8 @@ import ChangePassword from "./pages/auth/ChangePassword";
 import Dashboard from "./pages/main/Dashboard";
 import Users from "./pages/main/Users";
 import Profile from "./pages/main/Profile";
+import Alerts from "./pages/alerts/Alerts";
+import Ads from "./pages/ads/Ads";
 
 const App = () => {
   const { session, loading } = useSession();
@@ -47,6 +49,8 @@ const App = () => {
         <Route path="/" element={<Dashboard />} />
         <Route path="/users" element={<Users />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/alerts" element={<Alerts />} />
+        <Route path="/ads" element={<Ads />} />
         {/* Add more protected pages here */}
       </Route>
 

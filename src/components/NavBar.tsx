@@ -2,14 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { useSession } from '@/context/SessionContext';
-import { logout } from '@/services/authService';
-import iconImage from '@/assets/images/icon.png';
 import {
   MdMenu,
   MdClose,
   MdDashboard,
   MdPeople,
-  MdLogout,
+  MdCellTower,
 } from 'react-icons/md';
 
 interface NavItem {
@@ -32,16 +30,11 @@ const NavBar: React.FC = () => {
   const navItems: NavItem[] = [
     { label: 'Dashboard', path: '/', icon: MdDashboard },
     { label: 'Users', path: '/users', icon: MdPeople },
+    { label: 'Alerts', path: '/alerts', icon: MdCellTower },
+    { label: 'Ad Revenue', path: '/ads', icon: MdCellTower },
   ];
 
   const isActive = (path: string) => location.pathname === path;
-
-  const handleLogout = async () => {
-    logout();
-    await clearSession();
-    navigate('/login');
-  };
-
   // Handle window resize
   useEffect(() => {
     const handleResize = () => {
