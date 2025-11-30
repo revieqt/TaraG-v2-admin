@@ -21,9 +21,12 @@ export default function Alerts() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Determine active tab based on URL path
-  const isEmergencyMonitoring = location.pathname.includes('/emergency-monitoring');
-  const activeTab = isEmergencyMonitoring ? 'emergency' : 'alerts';
+  const tabs = [
+    { id: 'alerts', label: 'Alerts', path: '/alerts', content: 'alerts' },
+    { id: 'emergency', label: 'Emergency Monitoring', path: '/alerts/emergency-monitoring', content: 'emergency' },
+  ];
+
+  const activeTab = tabs.find(tab => location.pathname === tab.path)?.id ?? 'alerts';
 
   // State
   const [alerts, setAlerts] = useState<IAlert[]>([]);
@@ -161,7 +164,7 @@ export default function Alerts() {
   };
 
   return (
-    <div style={{ backgroundColor }} className="min-h-screen pt-20 md:p-6 md:pt-20">
+    <div style={{ backgroundColor }} className="min-h-screen pt-2 md:p-6 md:pt-2">
       <GradientBlobs />
       <div className="max-w-7xl mx-auto z-10 relative">
         {/* Header */}
@@ -182,49 +185,30 @@ export default function Alerts() {
           }}
         >
           <div className="flex gap-8 p-2">
-            <button
-              onClick={() => navigate('/alerts')}
-              className={`pb-3 transition-colors relative ${
-                activeTab === 'alerts'
-                  ? `text-white font-semibold`
-                  : `text-gray-400 hover:text-gray-300`
-              }`}
-              style={
-                activeTab === 'alerts'
-                  ? { color: '#00CAFF' }
-                  : undefined
-              }
-            >
-              Alerts
-              {activeTab === 'alerts' && (
-                <div
-                  className="absolute bottom-0 left-0 right-0 h-1 rounded-t-full"
-                  style={{ backgroundColor: '#00CAFF' }}
-                ></div>
-              )}
-            </button>
-
-            <button
-              onClick={() => navigate('/alerts/emergency-monitoring')}
-              className={`pb-3 transition-colors relative ${
-                activeTab === 'emergency'
-                  ? `text-white font-semibold`
-                  : `text-gray-400 hover:text-gray-300`
-              }`}
-              style={
-                activeTab === 'emergency'
-                  ? { color: '#00CAFF' }
-                  : undefined
-              }
-            >
-              Emergency Monitoring
-              {activeTab === 'emergency' && (
-                <div
-                  className="absolute bottom-0 left-0 right-0 h-1 rounded-t-full"
-                  style={{ backgroundColor: '#00CAFF' }}
-                ></div>
-              )}
-            </button>
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => navigate(tab.path)}
+                className={`pb-3 transition-colors relative ${
+                  activeTab === tab.id
+                    ? `text-white font-semibold`
+                    : `text-gray-400 hover:text-gray-300`
+                }`}
+                style={
+                  activeTab === tab.id
+                    ? { color: '#00CAFF' }
+                    : undefined
+                }
+              >
+                {tab.label}
+                {activeTab === tab.id && (
+                  <div
+                    className="absolute bottom-0 left-0 right-0 h-1 rounded-t-full"
+                    style={{ backgroundColor: '#00CAFF' }}
+                  ></div>
+                )}
+              </button>
+            ))}
           </div>
 
           {/* Tab Content */}

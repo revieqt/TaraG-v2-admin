@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { useSession } from '@/context/SessionContext';
+import { useLocation, Link } from 'react-router-dom';
 import {
   MdMenu,
   MdClose,
   MdDashboard,
   MdPeople,
   MdCellTower,
-  MdMonetizationOn,
+  MdEventSeat,
+  MdAnalytics,
+  MdContactless,
+  MdSettings
 } from 'react-icons/md';
 
 interface NavItem {
@@ -21,8 +23,6 @@ const NavBar: React.FC = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [isOpen, setIsOpen] = useState(!isMobile); // Open on desktop, closed on mobile
   const location = useLocation();
-  const navigate = useNavigate();
-  const { session, clearSession } = useSession();
   const backgroundColor = useThemeColor({}, 'primary');
   const tintColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
@@ -32,15 +32,25 @@ const NavBar: React.FC = () => {
     { label: 'Dashboard', path: '/', icon: MdDashboard },
     { label: 'Users', path: '/users', icon: MdPeople },
     { label: 'Alerts', path: '/alerts', icon: MdCellTower },
-    { label: 'Analytics', path: '/analytics', icon: MdMonetizationOn },
-    { label: 'Content', path: '/content', icon: MdMonetizationOn },
-    { label: 'System', path: '/system', icon: MdMonetizationOn },
+    { label: 'Events', path: '/events', icon: MdEventSeat },
+    { label: 'Content', path: '/content', icon: MdContactless },
+    { label: 'Analytics', path: '/analytics', icon: MdAnalytics },
+    { label: 'System', path: '/system', icon: MdSettings },
   ];
 
   const isActive = (path: string) => {
     // For alerts, match both /alerts and /alerts/* (subroutes)
     if (path === '/alerts') {
       return location.pathname.startsWith('/alerts');
+    }
+    if (path === '/content') {
+      return location.pathname.startsWith('/content');
+    }
+    if (path === '/analytics') {
+      return location.pathname.startsWith('/analytics');
+    }
+    if (path === '/system') {
+      return location.pathname.startsWith('/system');
     }
     return location.pathname === path;
   };
@@ -62,7 +72,7 @@ const NavBar: React.FC = () => {
       {/* Menu Toggle Button - Always visible */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-3 left-3 z-50 p-2 rounded-lg transition-colors"
+        className="fixed top-5 left-3 z-50 p-2 rounded-lg transition-colors"
         style={{ backgroundColor: backgroundColor}}
         aria-label="Toggle menu"
       >
@@ -130,7 +140,7 @@ const NavBar: React.FC = () => {
                   rounded-lg
                   transition-all duration-200
                   hover:opacity-80
-                  font-poppins text-s
+                  font-poppins text-sm
                   ${!isOpen && !isMobile ? 'justify-center' : ''}
                 `}
               >
@@ -140,38 +150,6 @@ const NavBar: React.FC = () => {
             );
           })}
         </div>
-
-        {/* Profile Tab at Bottom */}
-        {(isOpen || isMobile) && (
-          <div className="pb-4 mt-auto" style={{ borderColor: textColor }}>
-            <Link
-              to="/profile"
-              onClick={() => isMobile && setIsOpen(false)}
-              style={{
-                backgroundColor: isActive('/profile') ? tintColor : 'transparent',
-                color: textColor,
-              }}
-              className={`
-                flex items-center justify-between
-                px-4 py-3
-                rounded-lg
-                transition-all duration-200
-                hover:opacity-80
-                font-poppins font-medium
-              `}
-            >
-              <div className="flex flex-col gap-1 flex-1">
-                <span className="text-sm font-semibold truncate">
-                  {session?.user?.fname} {session?.user?.lname}
-                </span>
-                <span className="text-xs opacity-70 truncate">
-                  @{session?.user?.username}
-                </span>
-              </div>
-              
-            </Link>
-          </div>
-        )}
       </nav>
     </>
   );

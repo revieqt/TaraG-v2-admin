@@ -7,6 +7,7 @@ import { MdLogout, MdPerson, MdSecurity, MdPalette } from "react-icons/md";
 import { useState } from "react";
 import { calculateAge } from "@/utils/calculateAge";
 import { formatDateToString } from "@/utils/formatDateToString";
+import GradientBlobs from "@/components/GradientBlobs";
 
 type TabType = "profile" | "account" | "customization";
 
@@ -41,23 +42,23 @@ export default function Profile() {
   return (
     <div
       style={{ backgroundColor }}
-      className="min-h-screen p-6 md:p-8"
+      className="min-h-screen pt-2 md:p-6 md:pt-2"
     >
-      <div className="max-w-5xl mx-auto">
+      <GradientBlobs/>
+      <div className="max-w-7xl mx-auto z-10 relative">
         {/* Header with User Info and Logout Button */}
         <div
           style={{
-            backgroundColor: primaryColor,
             color: textColor,
           }}
-          className="rounded-xl p-6 mb-6 shadow-md"
+          className="rounded-xl px-3 mb-6"
         >
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               {/* Avatar */}
               <div
                 style={{ backgroundColor: secondaryColor }}
-                className="w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0"
+                className="w-full aspect-square rounded-full flex items-center justify-center flex-shrink-0"
               >
                 <span className="text-lg font-bold text-white">
                   {user.fname?.charAt(0)}{user.lname?.charAt(0) || ''}
@@ -95,34 +96,37 @@ export default function Profile() {
 
         {/* Tabs */}
         <div
-          style={{
-            backgroundColor: primaryColor,
-            borderColor: textColor,
-          }}
-          className="rounded-xl shadow-md overflow-hidden"
+          className="md:rounded-[10px] p-3 mb-6 backdrop-blur-md border border-white border-opacity-20 shadow-lg"
         >
           {/* Tab Navigation */}
-          <div
-            className="flex overflow-x-auto"
-          >
+          <div className="flex gap-8 p-2">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
+                className={`pb-3 transition-colors relative flex items-center gap-2 ${
+                  activeTab === tab.id
+                    ? `text-white font-semibold `
+                    : `text-gray-400 hover:text-gray-300`
+                }`}
                 style={{
-                  color: activeTab === tab.id ? secondaryColor : textColor,
-                  borderBottomColor: activeTab === tab.id ? secondaryColor : "transparent",
+                  color: activeTab === tab.id ? "#00CAFF" : undefined,
                 }}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 font-medium font-poppins transition-all border-b-2 text-xs md:text-sm"
               >
                 {tab.icon}
-                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="hidden sm:inline text-sm">{tab.label}</span>
+                {activeTab === tab.id && (
+                  <div
+                    className="absolute bottom-0 left-0 right-0 h-1 rounded-t-full"
+                    style={{ backgroundColor: "#00CAFF" }}
+                  ></div>
+                )}
               </button>
             ))}
           </div>
 
           {/* Tab Content */}
-          <div className="p-6" style={{ color: textColor }}>
+          <div className="mt-6" style={{ color: textColor }}>
             {/* Profile Information Tab */}
             {activeTab === "profile" && (
               <div className="space-y-4">

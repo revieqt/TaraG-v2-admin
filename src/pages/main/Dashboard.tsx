@@ -35,15 +35,16 @@ export default function Dashboard() {
   return (
     <div
       style={{ backgroundColor }}
-      className="min-h-screen p-6 md:p-8"
+      className="min-h-screen pt-2 md:p-6 md:pt-2"
     >
-      <div className="max-w-6xl mx-auto">
+      <GradientBlobs />
+      <div className="max-w-7xl mx-auto z-10 relative">
         {/* Welcome Header */}
-        <div className="mb-8">
-          <h1 style={{ color: textColor }} className="text-4xl font-bold font-poppins mb-2">
+        <div className="mb-5 mx-5">
+          <h1 style={{ color: textColor }} className="text-3xl font-bold font-poppins mb-2">
             Welcome Back, {session?.user?.fname}! 👋
           </h1>
-          <p style={{ color: textColor }} className="text-lg opacity-70 font-poppins">
+          <p style={{ color: textColor }} className="text-base opacity-70 font-poppins">
             Here's what's happening with your platform today.
           </p>
         </div>
