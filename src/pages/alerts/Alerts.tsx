@@ -214,7 +214,7 @@ export default function Alerts() {
           {/* Tab Content */}
           <div className="mt-2">
             {activeTab === 'alerts' && (
-              <>
+              <div style={{ backgroundColor: primaryColor }} className="rounded-[8px] p-3 min-h-96">
                 {/* Top Bar - Search and Filters */}
                 <div className="flex flex-col md:flex-row md:gap-2">
                   <div className="flex-1 w-full flex-shrink-0">
@@ -434,7 +434,7 @@ export default function Alerts() {
                     </button>
                   </div>
                 )}
-              </>
+              </div>
             )}
 
             {activeTab === 'emergency' && <EmergencyMonitoring />}

@@ -159,7 +159,7 @@ export default function System() {
           {/* Tab Content */}
           <div className="mt-2">
             {activeTab === 0 && (
-              <div className="space-y-4">
+              <div style={{ backgroundColor: primaryColor }} className="rounded-[8px] p-3 min-h-96 space-y-4">
                 {/* Health Check Controls */}
                 <div className="flex flex-col md:flex-row gap-3 md:justify-end">
                   <div className="flex gap-3 flex-col md:flex-row w-full md:w-auto">
@@ -231,8 +231,7 @@ export default function System() {
                 <div
                   ref={consoleRef}
                   style={{
-                    backgroundColor: `${primaryColor}40`,
-                    borderColor: `${primaryColor}60`,
+                    backgroundColor: primaryColor,
                     color: textColor,
                   }}
                   className="rounded-lg border p-4 h-96 overflow-y-auto font-mono text-sm"

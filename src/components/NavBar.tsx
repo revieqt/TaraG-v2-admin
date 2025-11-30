@@ -72,8 +72,8 @@ const NavBar: React.FC = () => {
       {/* Menu Toggle Button - Always visible */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-5 left-3 z-50 p-2 rounded-lg transition-colors"
-        style={{ backgroundColor: backgroundColor}}
+        className="fixed top-5 left-4 z-50 p-2 rounded-lg transition-colors backdrop-blur-md border border-white border-opacity-20"
+        style={{ backgroundColor: `${backgroundColor}40`}}
         aria-label="Toggle menu"
       >
         {isOpen ? <MdClose size={24} color={textColor} /> : <MdMenu size={24} color={textColor}/>}
@@ -83,42 +83,44 @@ const NavBar: React.FC = () => {
       {isMobile && isOpen && (
         <div
           className="fixed inset-0 z-30"
-          style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+          style={{ backgroundColor: `${backgroundColor}60` }}
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <nav
-        style={{ backgroundColor }}
+        style={{ 
+          backgroundColor: `${backgroundColor}40`,
+          borderColor: `${backgroundColor}60`,
+          width: isOpen ? '240px' : '76px',
+        }}
         className={`
           ${isMobile ? 'fixed' : 'static'}
           ${isMobile ? 'left-0 top-0' : ''}
           h-screen
-          ${isOpen ? 'w-60' : isMobile ? '-w-0' : 'w-19'}
           z-40
           transition-all duration-300 ease-in-out
-          ${isMobile ? (isOpen ? 'translate-x-0' : '-translate-x-full') : 'translate-x-0'}
+          ${isMobile ? (isOpen ? 'translate-x-0' : '-translate-x-full') : ''}
           pt-4
-          px-2
+          px-3
           flex flex-col
           overflow-hidden
+          ${isMobile ? 'backdrop-blur-xl' : 'backdrop-blur-md'}
+          border-r border-white border-opacity-20 shadow-lg
         `}
       >
         {/* Logo/Title - Hide on collapsed desktop */}
         {(!isMobile && isOpen) || isMobile ? (
-          <div className="mb-4 ml-11">
-            <h1 style={{ color: secondaryColor }} className="text-l font-bold font-poppins">
-            TaraAdmin
+          <div className="mb-4 ml-12 mt-3 items-center">
+            <h1 style={{ color: secondaryColor }} className="text-l font-bold font-poppins text-nowrap">
+            TaraG Admin
             </h1>
-            <p style={{ color: textColor }} className="text-xs font-poppins">
-                TaraG Administrator Panel
-            </p>
           </div>
         ) : (
           <div className="mb-4 h-10" />
         )}
-
+        
         {/* Navigation Items */}
         <div className="flex-1 overflow-y-auto">
           {navItems.map((item) => {
@@ -131,7 +133,8 @@ const NavBar: React.FC = () => {
                 onClick={() => isMobile && setIsOpen(false)}
                 title={!isOpen && !isMobile ? item.label : ''}
                 style={{
-                  backgroundColor: active ? tintColor : 'transparent',
+                  backgroundColor: active ? `${secondaryColor}40` : 'transparent',
+                  borderColor: active ? `${secondaryColor}60` : 'transparent',
                   color: active ? secondaryColor : textColor,
                 }}
                 className={`
@@ -142,9 +145,10 @@ const NavBar: React.FC = () => {
                   hover:opacity-80
                   font-poppins text-sm
                   ${!isOpen && !isMobile ? 'justify-center' : ''}
+                  backdrop-blur-sm border border-white border-opacity-10
                 `}
               >
-                <Icon size={22  } color={active ? secondaryColor : textColor} />
+                <Icon size={22} color={active ? secondaryColor : textColor} />
                 {(isOpen || isMobile) && <span>{item.label}</span>}
               </Link>
             );

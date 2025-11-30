@@ -6,7 +6,7 @@ export default function EmergencyMonitoring() {
   const primaryColor = useThemeColor({}, 'primary');
 
   return (
-    <div style={{ backgroundColor: primaryColor }} className="rounded-[20px] p-8 min-h-96">
+    <div style={{ backgroundColor: primaryColor }} className="rounded-[8px] p-3 min-h-96">
       <div className="text-center">
         <h2 style={{ color: textColor }} className="text-2xl font-bold font-poppins mb-4">
           Emergency Monitoring
