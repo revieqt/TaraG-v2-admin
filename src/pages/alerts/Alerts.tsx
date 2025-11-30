@@ -5,16 +5,25 @@ import DropDownField from '@/components/DropDownField';
 import DatePicker from '@/components/DatePicker';
 import AlertInputModal from '@/pages/alerts/AlertInputModal';
 import AlertViewModal from '@/pages/alerts/AlertViewModal';
+import EmergencyMonitoring from '@/pages/alerts/EmergencyMonitoring';
 import { getAlerts, deleteAlert, updateAlert, createAlert } from '@/services/alertService';
 import type { CreateAlertPayload, IAlert } from '@/services/alertService';
 import { useState, useEffect, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { formatDateToString } from '@/utils/formatDateToString';
+import GradientBlobs from '@/components/GradientBlobs';
 
 export default function Alerts() {
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
   const primaryColor = useThemeColor({}, 'primary');
   const { session } = useSession();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Determine active tab based on URL path
+  const isEmergencyMonitoring = location.pathname.includes('/emergency-monitoring');
+  const activeTab = isEmergencyMonitoring ? 'emergency' : 'alerts';
 
   // State
   const [alerts, setAlerts] = useState<IAlert[]>([]);
@@ -152,236 +161,301 @@ export default function Alerts() {
   };
 
   return (
-    <div style={{ backgroundColor }} className="min-h-screen p-6 md:p-8">
-      <div className="max-w-7xl mx-auto">
+    <div style={{ backgroundColor }} className="min-h-screen pt-20 md:p-6 md:pt-20">
+      <GradientBlobs />
+      <div className="max-w-7xl mx-auto z-10 relative">
         {/* Header */}
-        <div className="mb-8">
-          <h1 style={{ color: textColor }} className="text-4xl font-bold font-poppins mb-2">
+        <div className="mb-5 mx-5">
+          <h1 style={{ color: textColor }} className="text-3xl font-bold font-poppins mb-2">
             Alerts
           </h1>
-          <p style={{ color: textColor }} className="text-lg opacity-70 font-poppins">
+          <p style={{ color: textColor }} className="text-base opacity-70 font-poppins">
             Manage and broadcast alerts to users
           </p>
         </div>
 
-        {/* Top Bar - Search and Filters */}
-        <div className="mb-6 flex flex-col md:flex-row gap-4">
-          <div className="flex-1 w-full flex gap-4 items-center">
-            <div className="flex-1">
-              <TextField
-                placeholder="Search alerts..."
-                value={searchKey}
-                onChangeText={setSearchKey}
-              />
-            </div>
-
-            {/* Filter Icon Button */}
-            <div ref={filterRef} className="relative">
-              <button
-                onClick={() => setIsFilterOpen(!isFilterOpen)}
-                className="relative p-3 bg-gray-300 text-gray-700 rounded-[100px] hover:bg-gray-400 transition-colors flex items-center justify-center"
-                title="Filter alerts"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                </svg>
-
-                {/* Red dot indicator */}
-                {(filterTarget || filterSeverity || filterDate) && (
-                  <div className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full"></div>
-                )}
-              </button>
-
-              {/* Filter Dropdown */}
-              {isFilterOpen && (
+        {/* Tabs */}
+        <div 
+          className="md:rounded-[10px] p-3 mb-6 backdrop-blur-md border border-white border-opacity-20 shadow-lg"
+          style={{ 
+            backgroundColor: `${primaryColor}40`,
+          }}
+        >
+          <div className="flex gap-8 p-2">
+            <button
+              onClick={() => navigate('/alerts')}
+              className={`pb-3 transition-colors relative ${
+                activeTab === 'alerts'
+                  ? `text-white font-semibold`
+                  : `text-gray-400 hover:text-gray-300`
+              }`}
+              style={
+                activeTab === 'alerts'
+                  ? { color: '#00CAFF' }
+                  : undefined
+              }
+            >
+              Alerts
+              {activeTab === 'alerts' && (
                 <div
-                  style={{ backgroundColor: primaryColor }}
-                  className="absolute top-full mt-2 right-0 w-72 p-4 rounded-[15px] shadow-lg z-40 border border-gray-200"
-                >
-                  <div className="space-y-4">
-                    {/* Target Filter */}
-                    <div>
-                      <label style={{ color: textColor }} className="block text-sm font-semibold mb-2">
-                        Target
-                      </label>
-                      <DropDownField
-                        placeholder="All Targets"
-                        value={filterTarget}
-                        onChangeValue={(value) => setFilterTarget(value as string)}
-                        options={[
-                          { label: 'All Targets', value: '' },
-                          { label: 'Everyone', value: 'everyone' },
-                          { label: 'Traveler', value: 'traveler' },
-                          { label: 'Admin', value: 'admin' },
-                        ]}
-                      />
-                    </div>
+                  className="absolute bottom-0 left-0 right-0 h-1 rounded-t-full"
+                  style={{ backgroundColor: '#00CAFF' }}
+                ></div>
+              )}
+            </button>
 
-                    {/* Severity Filter */}
-                    <div>
-                      <label style={{ color: textColor }} className="block text-sm font-semibold mb-2">
-                        Severity
-                      </label>
-                      <DropDownField
-                        placeholder="All Severity"
-                        value={filterSeverity}
-                        onChangeValue={(value) => setFilterSeverity(value as string)}
-                        options={[
-                          { label: 'All Severity', value: '' },
-                          { label: 'Low', value: 'low' },
-                          { label: 'Medium', value: 'medium' },
-                          { label: 'High', value: 'high' },
-                        ]}
-                      />
-                    </div>
+            <button
+              onClick={() => navigate('/alerts/emergency-monitoring')}
+              className={`pb-3 transition-colors relative ${
+                activeTab === 'emergency'
+                  ? `text-white font-semibold`
+                  : `text-gray-400 hover:text-gray-300`
+              }`}
+              style={
+                activeTab === 'emergency'
+                  ? { color: '#00CAFF' }
+                  : undefined
+              }
+            >
+              Emergency Monitoring
+              {activeTab === 'emergency' && (
+                <div
+                  className="absolute bottom-0 left-0 right-0 h-1 rounded-t-full"
+                  style={{ backgroundColor: '#00CAFF' }}
+                ></div>
+              )}
+            </button>
+          </div>
 
-                    {/* Date Filter */}
-                    <div>
-                      <label style={{ color: textColor }} className="block text-sm font-semibold mb-2">
-                        Active Date
-                      </label>
-                      <DatePicker
-                        placeholder="Select date"
-                        value={filterDate}
-                        onChangeDate={setFilterDate}
+          {/* Tab Content */}
+          <div className="mt-2">
+            {activeTab === 'alerts' && (
+              <>
+                {/* Top Bar - Search and Filters */}
+                <div className="flex flex-col md:flex-row md:gap-2">
+                  <div className="flex-1 w-full flex-shrink-0">
+                    {/* Search with Filter inside */}
+                    <div className="relative">
+                      <TextField
+                        placeholder="Search alerts..."
+                        value={searchKey}
+                        onChangeText={setSearchKey}
                       />
-                    </div>
+                      
+                      {/* Filter Button Inside TextField */}
+                      <div ref={filterRef} className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        <button
+                          onClick={() => setIsFilterOpen(!isFilterOpen)}
+                          className="relative flex items-center justify-center transition-colors"
+                          title="Filter alerts"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                          </svg>
 
-                    {/* Clear Filters Button */}
+                          {/* Red dot indicator */}
+                          {(filterTarget || filterSeverity || filterDate) && (
+                            <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
+                          )}
+                        </button>
+
+                        {/* Filter Dropdown */}
+                        {isFilterOpen && (
+                          <div
+                            style={{ backgroundColor: primaryColor }}
+                            className="absolute top-full mt-3 right-0 w-72 p-4 rounded-[10px] shadow-lg z-100"
+                          >
+                            <div className="space-y-4">
+                              {/* Target Filter */}
+                              <div>
+                                <label style={{ color: textColor }} className="block text-sm font-semibold mb-2">
+                                  Target
+                                </label>
+                                <DropDownField
+                                  placeholder="All Targets"
+                                  value={filterTarget}
+                                  onChangeValue={(value) => setFilterTarget(value as string)}
+                                  options={[
+                                    { label: 'All Targets', value: '' },
+                                    { label: 'Everyone', value: 'everyone' },
+                                    { label: 'Traveler', value: 'traveler' },
+                                    { label: 'Admin', value: 'admin' },
+                                  ]}
+                                />
+                              </div>
+
+                              {/* Severity Filter */}
+                              <div>
+                                <label style={{ color: textColor }} className="block text-sm font-semibold mb-2">
+                                  Severity
+                                </label>
+                                <DropDownField
+                                  placeholder="All Severity"
+                                  value={filterSeverity}
+                                  onChangeValue={(value) => setFilterSeverity(value as string)}
+                                  options={[
+                                    { label: 'All Severity', value: '' },
+                                    { label: 'Low', value: 'low' },
+                                    { label: 'Medium', value: 'medium' },
+                                    { label: 'High', value: 'high' },
+                                  ]}
+                                />
+                              </div>
+
+                              {/* Date Filter */}
+                              <div>
+                                <label style={{ color: textColor }} className="block text-sm font-semibold mb-2">
+                                  Active Date
+                                </label>
+                                <DatePicker
+                                  placeholder="Select date"
+                                  value={filterDate}
+                                  onChangeDate={setFilterDate}
+                                />
+                              </div>
+
+                              {/* Clear Filters Button */}
+                              <button
+                                onClick={() => {
+                                  setFilterTarget('');
+                                  setFilterSeverity('');
+                                  setFilterDate('');
+                                  setIsFilterOpen(false);
+                                }}
+                                className="w-full px-4 py-2 bg-gray-300 text-gray-700 rounded-[10px] font-semibold hover:bg-gray-400 transition-colors text-sm"
+                              >
+                                Clear Filters
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleCreateAlert}
+                    className="w-full md:w-auto h-12 px-4 py-2 bg-[#00CAFF] text-white rounded-[15px] font-semibold hover:bg-[#00b8e0] transition-colors"
+                  >
+                    + New Alert
+                  </button>
+                </div>
+
+                {/* Alerts List */}
+                <div className="rounded-[20px] overflow-hidden">
+                  {loading ? (
+                    <div className="p-8 text-center" style={{ color: textColor }}>
+                      <p className="font-poppins">Loading alerts...</p>
+                    </div>
+                  ) : alerts.length === 0 ? (
+                    <div className="p-8 text-center" style={{ color: textColor }}>
+                      <p className="font-poppins text-lg">No alerts found</p>
+                      <p className="opacity-70 mt-2">Create your first alert to get started</p>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr style={{ borderBottom: `2px solid ${textColor}20` }}>
+                            <th style={{ color: textColor }} className="px-6 py-4 text-left font-semibold w-1/3">
+                              Title
+                            </th>
+                            <th style={{ color: textColor }} className="px-6 py-4 text-left font-semibold">
+                              Target
+                            </th>
+                            <th style={{ color: textColor }} className="px-6 py-4 text-left font-semibold">
+                              Severity
+                            </th>
+                            <th style={{ color: textColor }} className="px-6 py-4 text-left font-semibold">
+                              Active Period
+                            </th>
+                            <th style={{ color: textColor }} className="px-6 py-4 text-center font-semibold">
+                              Actions
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {alerts.map((alert) => (
+                            <tr
+                              key={alert._id}
+                              style={{ borderBottom: `1px solid ${textColor}10` }}
+                              className="hover:bg-opacity-50 transition-colors"
+                            >
+                              <td style={{ color: textColor }} className="px-6 py-4 text-sm">
+                                {alert.title}
+                              </td>
+                              <td className="px-6 py-4">
+                                <span style={{ color: textColor }} className="ml-2 text-sm capitalize">
+                                  {alert.target}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4">
+                                <span style={{ color: textColor }} className="ml-2 text-sm capitalize">
+                                  {alert.severity}
+                                </span>
+                              </td>
+                              <td style={{ color: textColor }} className="px-6 py-4 text-sm">
+                                {formatDateToString(new Date(alert.startsOn))} - {formatDateToString(new Date(alert.endsOn))}
+                              </td>
+                              <td className="px-6 py-4 text-center">
+                                <button
+                                  onClick={() => handleViewAlert(alert)}
+                                  className="text-green-500 hover:text-green-700 font-semibold text-sm mr-3"
+                                >
+                                  View
+                                </button>
+                                <button
+                                  onClick={() => handleEditAlert(alert)}
+                                  className="text-[#00CAFF] hover:text-[#00b8e0] font-semibold text-sm mr-3"
+                                >
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteAlert(alert._id)}
+                                  disabled={deleting === alert._id}
+                                  className="text-red-500 hover:text-red-700 font-semibold text-sm disabled:opacity-50"
+                                >
+                                  {deleting === alert._id ? 'Deleting...' : 'Delete'}
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="mt-6 flex items-center justify-center gap-2">
                     <button
-                      onClick={() => {
-                        setFilterTarget('');
-                        setFilterSeverity('');
-                        setFilterDate('');
-                        setIsFilterOpen(false);
-                      }}
-                      className="w-full px-4 py-2 bg-gray-300 text-gray-700 rounded-[10px] font-semibold hover:bg-gray-400 transition-colors text-sm"
+                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                      disabled={currentPage === 1}
+                      style={{ color: textColor }}
+                      className="px-4 py-2 rounded disabled:opacity-50"
                     >
-                      Clear Filters
+                      Previous
+                    </button>
+                    <span style={{ color: textColor }} className="px-4 py-2 font-semibold">
+                      Page {currentPage} of {totalPages} ({totalItems} items)
+                    </span>
+                    <button
+                      onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                      disabled={currentPage === totalPages}
+                      style={{ color: textColor }}
+                      className="px-4 py-2 rounded disabled:opacity-50"
+                    >
+                      Next
                     </button>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </>
+            )}
+
+            {activeTab === 'emergency' && <EmergencyMonitoring />}
           </div>
-
-          <button
-            onClick={handleCreateAlert}
-            className="w-full md:w-auto px-6 py-3 bg-[#00CAFF] text-white rounded-[100px] font-semibold hover:bg-[#00b8e0] transition-colors"
-          >
-            + New Alert
-          </button>
         </div>
-
-        {/* Alerts List */}
-        <div style={{ backgroundColor: primaryColor }} className="rounded-[20px] overflow-hidden">
-          {loading ? (
-            <div className="p-8 text-center" style={{ color: textColor }}>
-              <p className="font-poppins">Loading alerts...</p>
-            </div>
-          ) : alerts.length === 0 ? (
-            <div className="p-8 text-center" style={{ color: textColor }}>
-              <p className="font-poppins text-lg">No alerts found</p>
-              <p className="opacity-70 mt-2">Create your first alert to get started</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr style={{ borderBottom: `2px solid ${textColor}20` }}>
-                    <th style={{ color: textColor }} className="px-6 py-4 text-left font-semibold w-1/3">
-                      Title
-                    </th>
-                    <th style={{ color: textColor }} className="px-6 py-4 text-left font-semibold">
-                      Target
-                    </th>
-                    <th style={{ color: textColor }} className="px-6 py-4 text-left font-semibold">
-                      Severity
-                    </th>
-                    <th style={{ color: textColor }} className="px-6 py-4 text-left font-semibold">
-                      Active Period
-                    </th>
-                    <th style={{ color: textColor }} className="px-6 py-4 text-center font-semibold">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {alerts.map((alert) => (
-                    <tr
-                      key={alert._id}
-                      style={{ borderBottom: `1px solid ${textColor}10` }}
-                      className="hover:bg-opacity-50 transition-colors"
-                    >
-                      <td style={{ color: textColor }} className="px-6 py-4 text-sm">
-                        {alert.title}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span style={{ color: textColor }} className="ml-2 text-sm capitalize">
-                          {alert.target}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span style={{ color: textColor }} className="ml-2 text-sm capitalize">
-                          {alert.severity}
-                        </span>
-                      </td>
-                      <td style={{ color: textColor }} className="px-6 py-4 text-sm">
-                        {formatDateToString(new Date(alert.startsOn))} - {formatDateToString(new Date(alert.endsOn))}
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <button
-                          onClick={() => handleViewAlert(alert)}
-                          className="text-green-500 hover:text-green-700 font-semibold text-sm mr-3"
-                        >
-                          View
-                        </button>
-                        <button
-                          onClick={() => handleEditAlert(alert)}
-                          className="text-[#00CAFF] hover:text-[#00b8e0] font-semibold text-sm mr-3"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteAlert(alert._id)}
-                          disabled={deleting === alert._id}
-                          className="text-red-500 hover:text-red-700 font-semibold text-sm disabled:opacity-50"
-                        >
-                          {deleting === alert._id ? 'Deleting...' : 'Delete'}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="mt-6 flex items-center justify-center gap-2">
-            <button
-              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-              disabled={currentPage === 1}
-              style={{ color: textColor }}
-              className="px-4 py-2 rounded disabled:opacity-50"
-            >
-              Previous
-            </button>
-            <span style={{ color: textColor }} className="px-4 py-2 font-semibold">
-              Page {currentPage} of {totalPages} ({totalItems} items)
-            </span>
-            <button
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-              disabled={currentPage === totalPages}
-              style={{ color: textColor }}
-              className="px-4 py-2 rounded disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Alert Modal */}

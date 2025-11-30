@@ -10,7 +10,7 @@ const GradientBlobs: React.FC<GradientBlobsProps> = ({ color }) => {
   const gradientColor = color || secondaryColor;
 
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-60">
       {/* Top Right Blob */}
       <div
         className="absolute -top-1/8 -right-1/8 w-[60%] aspect-square rounded-full opacity-40"

@@ -32,10 +32,19 @@ const NavBar: React.FC = () => {
     { label: 'Dashboard', path: '/', icon: MdDashboard },
     { label: 'Users', path: '/users', icon: MdPeople },
     { label: 'Alerts', path: '/alerts', icon: MdCellTower },
-    { label: 'Revenue', path: '/revenue', icon: MdMonetizationOn },
+    { label: 'Analytics', path: '/analytics', icon: MdMonetizationOn },
+    { label: 'Content', path: '/content', icon: MdMonetizationOn },
+    { label: 'System', path: '/system', icon: MdMonetizationOn },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    // For alerts, match both /alerts and /alerts/* (subroutes)
+    if (path === '/alerts') {
+      return location.pathname.startsWith('/alerts');
+    }
+    return location.pathname === path;
+  };
+
   // Handle window resize
   useEffect(() => {
     const handleResize = () => {

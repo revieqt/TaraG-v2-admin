@@ -49,7 +49,7 @@ const App = () => {
         <Route path="/" element={<Dashboard />} />
         <Route path="/users" element={<Users />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/alerts" element={<Alerts />} />
+        <Route path="/alerts/*" element={<Alerts />} />
         <Route path="/revenue" element={<Revenue />} />
         {/* Add more protected pages here */}
       </Route>
