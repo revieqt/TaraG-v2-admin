@@ -113,19 +113,6 @@ export default function TopBar() {
             ))}
           </div>
         )}
-
-        {isSearchOpen && searchQuery && filteredResults.length === 0 && (
-          <div
-            style={{
-              backgroundColor: primaryColor,
-              borderColor: `${primaryColor}60`,
-              color: textColor,
-            }}
-            className="absolute top-full mt-2 left-0 right-0 rounded-[10px] shadow-lg border z-50 px-4 py-3 text-sm text-center opacity-70"
-          >
-            No results found
-          </div>
-        )}
       </div>
 
       {/* Profile Section - Image + Info + Logout */}
@@ -136,7 +123,7 @@ export default function TopBar() {
           className="flex items-center gap-3 px-2 py-2 h-12 rounded-[15px] transition-opacity hover:opacity-80 flex-shrink-0"
         >
           {/* Profile Image */}
-          <ProfileImage imagePath={user.profileImage} size="small" />
+          <ProfileImage imagePath={user.profileImage} size="medium" />
           {/* Name - Hidden on small screens */}
           <div className="hidden md:flex flex-col items-start">
             <span className="text-sm font-semibold font-poppins">

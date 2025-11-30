@@ -97,7 +97,7 @@ export default function Profile() {
                 className="relative group flex-shrink-0 transition-opacity hover:opacity-80 disabled:opacity-50"
                 title="Click to change profile image"
               >
-                <ProfileImage imagePath={user.profileImage} size="large" />
+                <ProfileImage imagePath={user.profileImage} size='xl' />
                 {isUploadingImage && (
                   <div className="absolute inset-0 rounded-full bg-black bg-opacity-50 flex items-center justify-center">
                     <span className="text-xs text-white font-semibold">Uploading...</span>
