@@ -3,8 +3,8 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { useNavigate } from "react-router-dom";
 import { MdLogout } from "react-icons/md";
 import TextField from "@/components/TextField";
+import ProfileImage from "@/components/ProfileImage";
 import { useState, useRef, useEffect } from "react";
-import defaultProfileImg from "@/assets/images/defaultProfile.png";
 
 interface SearchItem {
   label: string;
@@ -65,7 +65,6 @@ export default function TopBar() {
   }
 
   const user = session.user;
-  const profileImage = user.profileImage || defaultProfileImg;
 
   const handleLogout = async () => {
     await clearSession();
@@ -137,11 +136,7 @@ export default function TopBar() {
           className="flex items-center gap-3 px-2 py-2 h-12 rounded-[15px] transition-opacity hover:opacity-80 flex-shrink-0"
         >
           {/* Profile Image */}
-          <img
-            src={profileImage}
-            alt="Profile"
-            className="w-10 h-10 rounded-full object-cover"
-          />
+          <ProfileImage imagePath={user.profileImage} size="small" />
           {/* Name - Hidden on small screens */}
           <div className="hidden md:flex flex-col items-start">
             <span className="text-sm font-semibold font-poppins">

@@ -1,25 +1,35 @@
 import { useSession } from "@/context/SessionContext";
 import { useTheme } from "@/context/ThemeContext";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { logout } from "@/services/authService";
-import { MdLogout, MdPerson, MdSecurity, MdPalette } from "react-icons/md";
-import { useState } from "react";
+import { updateProfileImage } from "@/services/userService";
+import { MdLogout } from "react-icons/md";
+import { useState, useRef } from "react";
 import { calculateAge } from "@/utils/calculateAge";
 import { formatDateToString } from "@/utils/formatDateToString";
 import GradientBlobs from "@/components/GradientBlobs";
-
-type TabType = "profile" | "account" | "customization";
+import ProfileImage from "@/components/ProfileImage";
 
 export default function Profile() {
-  const { session, clearSession } = useSession();
+  const { session, clearSession, updateSession } = useSession();
   const navigate = useNavigate();
+  const location = useLocation();
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
   const secondaryColor = useThemeColor({}, "secondary");
   const primaryColor = useThemeColor({}, "primary");
   const { theme, setTheme } = useTheme();
-  const [activeTab, setActiveTab] = useState<TabType>("profile");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+  const tabs = [
+    { id: 0, label: "Profile", path: "/profile", content: null },
+    { id: 1, label: "Account Control", path: "/profile/account-control", content: null },
+    { id: 2, label: "Customization", path: "/profile/customization", content: null },
+  ];
+
+  const activeTab = tabs.find(tab => location.pathname === tab.path)?.id ?? 0;
 
   if (!session?.user) {
     return <div>Loading...</div>;
@@ -33,11 +43,36 @@ export default function Profile() {
     navigate("/login");
   };
 
-  const tabs: { id: TabType; label: string; icon: React.ReactNode }[] = [
-    { id: "profile", label: "Profile Information", icon: <MdPerson size={20} /> },
-    { id: "account", label: "Account Control", icon: <MdSecurity size={20} /> },
-    { id: "customization", label: "Customization", icon: <MdPalette size={20} /> },
-  ];
+  const handleProfileImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleProfileImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !session?.accessToken || !user?.id) return;
+
+    try {
+      setIsUploadingImage(true);
+      const newProfileImage = await updateProfileImage(session.accessToken, user.id, file);
+      
+      // Update session with new profile image
+      await updateSession({
+        user: {
+          ...user,
+          profileImage: newProfileImage,
+        },
+      });
+    } catch (error) {
+      console.error("Failed to upload profile image:", error);
+      alert("Failed to upload profile image. Please try again.");
+    } finally {
+      setIsUploadingImage(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
 
   return (
     <div
@@ -55,15 +90,29 @@ export default function Profile() {
         >
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              {/* Avatar */}
-              <div
-                style={{ backgroundColor: secondaryColor }}
-                className="w-full aspect-square rounded-full flex items-center justify-center flex-shrink-0"
+              {/* Avatar - Clickable for image upload */}
+              <button
+                onClick={handleProfileImageClick}
+                disabled={isUploadingImage}
+                className="relative group flex-shrink-0 transition-opacity hover:opacity-80 disabled:opacity-50"
+                title="Click to change profile image"
               >
-                <span className="text-lg font-bold text-white">
-                  {user.fname?.charAt(0)}{user.lname?.charAt(0) || ''}
-                </span>
-              </div>
+                <ProfileImage imagePath={user.profileImage} size="large" />
+                {isUploadingImage && (
+                  <div className="absolute inset-0 rounded-full bg-black bg-opacity-50 flex items-center justify-center">
+                    <span className="text-xs text-white font-semibold">Uploading...</span>
+                  </div>
+                )}
+              </button>
+
+              {/* Hidden file input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleProfileImageChange}
+                className="hidden"
+              />
 
               {/* User Info */}
               <div>
@@ -97,28 +146,32 @@ export default function Profile() {
         {/* Tabs */}
         <div
           className="md:rounded-[10px] p-3 mb-6 backdrop-blur-md border border-white border-opacity-20 shadow-lg"
+          style={{ 
+            backgroundColor: `${primaryColor}40`,
+          }}
         >
           {/* Tab Navigation */}
           <div className="flex gap-8 p-2">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`pb-3 transition-colors relative flex items-center gap-2 ${
+                onClick={() => navigate(tab.path)}
+                className={`pb-3 transition-colors relative ${
                   activeTab === tab.id
-                    ? `text-white font-semibold `
+                    ? `text-white font-semibold`
                     : `text-gray-400 hover:text-gray-300`
                 }`}
-                style={{
-                  color: activeTab === tab.id ? "#00CAFF" : undefined,
-                }}
+                style={
+                  activeTab === tab.id
+                    ? { color: '#00CAFF' }
+                    : undefined
+                }
               >
-                {tab.icon}
-                <span className="hidden sm:inline text-sm">{tab.label}</span>
+                {tab.label}
                 {activeTab === tab.id && (
                   <div
                     className="absolute bottom-0 left-0 right-0 h-1 rounded-t-full"
-                    style={{ backgroundColor: "#00CAFF" }}
+                    style={{ backgroundColor: '#00CAFF' }}
                   ></div>
                 )}
               </button>
@@ -128,7 +181,7 @@ export default function Profile() {
           {/* Tab Content */}
           <div className="mt-6" style={{ color: textColor }}>
             {/* Profile Information Tab */}
-            {activeTab === "profile" && (
+            {activeTab === 0 && (
               <div className="space-y-4">
                 <h2 className="text-base font-bold font-poppins mb-4">Profile Information</h2>
 
@@ -215,7 +268,7 @@ export default function Profile() {
             )}
 
             {/* Account Control Tab */}
-            {activeTab === "account" && (
+            {activeTab === 1 && (
               <div className="space-y-4">
                 <h2 className="text-base font-bold font-poppins mb-4">Account Control</h2>
 
@@ -266,7 +319,7 @@ export default function Profile() {
             )}
 
             {/* Customization Tab */}
-            {activeTab === "customization" && (
+            {activeTab === 2 && (
               <div className="space-y-4">
                 <h2 className="text-base font-bold font-poppins mb-4">Customization</h2>
 
