@@ -1,7 +1,6 @@
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 export default function EmergencyMonitoring() {
-  const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
   const primaryColor = useThemeColor({}, 'primary');
 

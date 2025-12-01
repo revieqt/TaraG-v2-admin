@@ -1,36 +1,44 @@
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useSession } from "@/context/SessionContext";
 import GradientBlobs from "@/components/GradientBlobs";
-import { getNumberOfAlertsToday } from "@/services/alertService";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 export default function Dashboard() {
   const { session } = useSession();
   const backgroundColor = useThemeColor({}, "background");
   const textColor = useThemeColor({}, "text");
-  const navigate = useNavigate();
+  const primaryColor = useThemeColor({}, "primary");
 
-  const [alertCount, setAlertCount] = useState<number>(0);
-  const [loadingAlertCount, setLoadingAlertCount] = useState(false);
+  // Dummy data for DAU
+  const dauData = [
+    { day: 'Mon', users: 2400 },
+    { day: 'Tue', users: 2210 },
+    { day: 'Wed', users: 2290 },
+    { day: 'Thu', users: 2000 },
+    { day: 'Fri', users: 2181 },
+    { day: 'Sat', users: 2500 },
+    { day: 'Sun', users: 2100 },
+  ];
 
-  useEffect(() => {
-    const fetchAlertCount = async () => {
-      if (!session?.accessToken) return;
+  // Dummy data for Feature Usage
+  const featureUsageData = [
+    { name: 'Maps', value: 35 },
+    { name: 'Alerts', value: 25 },
+    { name: 'Routes', value: 20 },
+    { name: 'Analytics', value: 15 },
+    { name: 'Other', value: 5 },
+  ];
 
-      try {
-        setLoadingAlertCount(true);
-        const count = await getNumberOfAlertsToday(session.accessToken);
-        setAlertCount(count);
-      } catch (error) {
-        console.error("Failed to fetch alert count:", error);
-      } finally {
-        setLoadingAlertCount(false);
-      }
-    };
+  const COLORS = ['#00CAFF', '#FF6B6B', '#4ECDC4', '#FFE66D', '#95E1D3'];
 
-    fetchAlertCount();
-  }, [session?.accessToken]);
+  // Stats cards
+  const stats = [
+    { label: 'Total Users', value: '12,543'},
+    { label: 'New Monthly Users', value: '1,234'},
+    { label: 'Android Users', value: '65%'},
+    { label: 'iOS Users', value: '35%'},
+  ];
 
   return (
     <div
@@ -40,77 +48,117 @@ export default function Dashboard() {
       <GradientBlobs />
       <div className="max-w-7xl mx-auto z-10 relative">
         {/* Welcome Header */}
-        <div className="mb-5 mx-5">
+        <div className="mb-8 mx-5">
           <h1 style={{ color: textColor }} className="text-3xl font-bold font-poppins mb-2">
             Welcome Back, {session?.user?.fname}! 👋
           </h1>
           <p style={{ color: textColor }} className="text-base opacity-70 font-poppins">
-            Here's what's happening with your platform today.
+            Here's your platform analytics f  or today.
           </p>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {[
-            { label: 'Total Users', value: '2,543', icon: '👥' },
-            { label: 'Active Sessions', value: '892', icon: '🟢' },
-            { label: 'Pending Reviews', value: '24', icon: '📋' },
-            {
-              label: 'Alerts Today',
-              value: loadingAlertCount ? '...' : alertCount.toString(),
-              icon: '🚨',
-              onClick: () => navigate('/alerts'),
-              clickable: true,
-            },
-          ].map((stat, idx) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4 mx-5">
+          {stats.map((stat, idx) => (
             <div
               key={idx}
-              onClick={stat.clickable ? stat.onClick : undefined}
               style={{
-                backgroundColor: textColor,
-                color: backgroundColor,
+                backgroundColor: `${primaryColor}40`,
+                borderColor: `${primaryColor}60`,
               }}
-              className={`p-6 rounded-lg shadow-md ${stat.clickable ? 'cursor-pointer hover:shadow-lg hover:scale-105 transition-all' : ''}`}
+              className="rounded-xl p-4 backdrop-blur-md border shadow-lg"
             >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm opacity-70 font-poppins">{stat.label}</p>
-                  <p className="text-3xl font-bold font-poppins mt-2">{stat.value}</p>
-                </div>
-                <span className="text-4xl">{stat.icon}</span>
-              </div>
+              <p style={{ color: textColor }} className="text-sm opacity-70 font-poppins">
+                {stat.label}
+              </p>
+              <p style={{ color: textColor }} className="text-3xl font-bold font-poppins mt-2">
+                {stat.value}
+              </p>
             </div>
           ))}
         </div>
 
-        {/* Recent Activity Section */}
-        <div
-          style={{
-            backgroundColor: textColor,
-            color: backgroundColor,
-          }}
-          className="rounded-lg p-8 shadow-md"
-        >
-          <h2 className="text-2xl font-bold font-poppins mb-6">Recent Activity</h2>
-          <div className="space-y-4">
-            {[
-              { action: 'User Registration', user: 'John Doe', time: '2 minutes ago' },
-              { action: 'Profile Update', user: 'Jane Smith', time: '1 hour ago' },
-              { action: 'Document Upload', user: 'Mike Johnson', time: '3 hours ago' },
-              { action: 'Report Generated', user: 'System', time: '5 hours ago' },
-            ].map((activity, idx) => (
-              <div
-                key={idx}
-                className="flex items-center justify-between py-3 border-b border-opacity-20"
-                style={{ borderColor: backgroundColor }}
-              >
-                <div>
-                  <p className="font-semibold font-poppins">{activity.action}</p>
-                  <p className="text-sm opacity-70 font-poppins">{activity.user}</p>
-                </div>
-                <span className="text-sm opacity-70 font-poppins">{activity.time}</span>
-              </div>
-            ))}
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mx-5">
+          {/* DAU Chart */}
+          <div
+            style={{
+              backgroundColor: `${primaryColor}40`,
+              borderColor: `${primaryColor}60`,
+            }}
+            className="rounded-xl p-6 backdrop-blur-md border shadow-lg"
+          >
+            <h2 style={{ color: textColor }} className="text-xl font-bold font-poppins mb-6">
+              Daily Active Users (DAU)
+            </h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={dauData}>
+                <CartesianGrid strokeDasharray="3 3" stroke={`${textColor}20`} />
+                <XAxis stroke={`${textColor}60`} />
+                <YAxis stroke={`${textColor}60`} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: `${backgroundColor}`,
+                    border: `1px solid ${primaryColor}`,
+                    borderRadius: '8px',
+                    color: textColor,
+                  }}
+                />
+                <Legend wrapperStyle={{ color: textColor }} />
+                <Line
+                  type="monotone"
+                  dataKey="users"
+                  stroke="#00CAFF"
+                  dot={{ fill: '#00CAFF', r: 5 }}
+                  activeDot={{ r: 7 }}
+                  strokeWidth={2}
+                  isAnimationActive={true}
+                  animationDuration={1000}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Feature Usage Chart */}
+          <div
+            style={{
+              backgroundColor: `${primaryColor}40`,
+              borderColor: `${primaryColor}60`,
+            }}
+            className="rounded-xl p-6 backdrop-blur-md border shadow-lg flex flex-col"
+          >
+            <h2 style={{ color: textColor }} className="text-xl font-bold font-poppins mb-6">
+              Feature Usage
+            </h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={featureUsageData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, value }) => `${name}: ${value}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                  isAnimationActive={true}
+                  animationDuration={1000}
+                >
+                  {featureUsageData.map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: `${backgroundColor}`,
+                    border: `1px solid ${primaryColor}`,
+                    borderRadius: '8px',
+                    color: textColor,
+                  }}
+                  formatter={(value) => `${value}%`}
+                />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>

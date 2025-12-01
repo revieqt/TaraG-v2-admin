@@ -24,7 +24,6 @@ const NavBar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(!isMobile); // Open on desktop, closed on mobile
   const location = useLocation();
   const backgroundColor = useThemeColor({}, 'primary');
-  const tintColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
   const secondaryColor = useThemeColor({}, 'secondary');
 
@@ -39,9 +38,14 @@ const NavBar: React.FC = () => {
   ];
 
   const isActive = (path: string) => {
-    // For alerts, match both /alerts and /alerts/* (subroutes)
+    if (path === '/users') {
+      return location.pathname.startsWith('/users');
+    }
     if (path === '/alerts') {
       return location.pathname.startsWith('/alerts');
+    }
+    if (path === '/events') {
+      return location.pathname.startsWith('/events');
     }
     if (path === '/content') {
       return location.pathname.startsWith('/content');
@@ -141,6 +145,7 @@ const NavBar: React.FC = () => {
                   flex items-center gap-3
                   px-3 py-3
                   rounded-lg
+                  text-nowrap
                   transition-all duration-200
                   hover:opacity-80
                   font-poppins text-sm
