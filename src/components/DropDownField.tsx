@@ -13,7 +13,6 @@ interface DropDownFieldProps {
   options: Option[];
   onFocus?: () => void;
   onBlur?: () => void;
-  isFocused?: boolean;
   className?: string;
 }
 
@@ -24,40 +23,33 @@ const DropDownField: React.FC<DropDownFieldProps> = ({
   options,
   onFocus,
   onBlur,
-  isFocused: isFocusedProp,
   className,
 }) => {
   const backgroundColor = useThemeColor({}, 'primary');
   const textColor = useThemeColor({}, 'text');
 
-  const [isFocused, setIsFocused] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const focused = isFocusedProp !== undefined ? isFocusedProp : isFocused;
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const selectedOption = options.find((opt) => opt.value === value);
 
   const handleFocus = () => {
-    setIsFocused(true);
     setIsOpen(true);
     onFocus?.();
   };
 
   const handleBlur = () => {
-    setIsFocused(false);
     onBlur?.();
   };
 
   const handleSelect = (optionValue: string | number) => {
     onChangeValue(optionValue);
     setIsOpen(false);
-    setIsFocused(false);
   };
 
   const handleClickOutside = (event: MouseEvent) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
       setIsOpen(false);
-      setIsFocused(false);
     }
   };
 

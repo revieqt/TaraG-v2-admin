@@ -1,6 +1,7 @@
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useLocation, useNavigate } from 'react-router-dom';
 import GradientBlobs from '@/components/GradientBlobs';
+import AnnouncementsList from './AnnouncementsList';
 
 export default function Content() {
   const backgroundColor = useThemeColor({}, 'background');
@@ -10,8 +11,8 @@ export default function Content() {
   const navigate = useNavigate();
 
   const tabs = [
-    { id: 0, label: 'Announcements', path: '/content', content: null },
-    { id: 1, label: 'Itinerary Templates', path: '/content/itinerary-template', content: null },
+    { id: 0, label: 'Announcements', path: '/content', content: 'announcements' },
+    { id: 1, label: 'Itinerary Templates', path: '/content/itinerary-template', content: 'itinerary' },
   ];
 
   const activeTab = tabs.find(tab => location.pathname === tab.path)?.id ?? 0;
@@ -67,15 +68,11 @@ export default function Content() {
 
           {/* Tab Content */}
           <div className="mt-2">
-            {activeTab === 0 && (
-              <>
-                
-              </>
-            )}
+            {activeTab === 0 && <AnnouncementsList />}
 
             {activeTab === 1 && (
               <>
-                {/* Logs Content */}
+                {/* Itinerary Templates Content */}
               </>
             )}
           </div>
