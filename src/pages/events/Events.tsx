@@ -19,7 +19,6 @@ export default function Events() {
 
   return (
     <div style={{ backgroundColor }} className="min-h-screen pt-2 md:p-6 md:pt-2">
-      <GradientBlobs />
       <div className="max-w-7xl mx-auto z-10 relative">
         {/* Header */}
         <div className="mb-5 mx-5">
@@ -33,9 +32,9 @@ export default function Events() {
 
         {/* Tabs */}
         <div 
-          className="md:rounded-[10px] p-3 mb-6 backdrop-blur-md border border-white border-opacity-20 shadow-lg"
+          className="md:rounded-[10px] p-3 mb-6"
           style={{ 
-            backgroundColor: `${primaryColor}40`,
+            backgroundColor: `${primaryColor}`,
           }}
         >
           <div className="flex gap-8 p-2">

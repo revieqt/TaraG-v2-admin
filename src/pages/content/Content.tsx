@@ -1,6 +1,5 @@
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { useLocation, useNavigate } from 'react-router-dom';
-import GradientBlobs from '@/components/GradientBlobs';
 import AnnouncementsList from './AnnouncementsList';
 
 export default function Content() {
@@ -20,7 +19,6 @@ export default function Content() {
 
   return (
     <div style={{ backgroundColor }} className="min-h-screen pt-2 md:p-6 md:pt-2">
-      <GradientBlobs />
       <div className="max-w-7xl mx-auto z-10 relative">
         {/* Header */}
         <div className="mb-5 mx-5">
@@ -34,9 +32,9 @@ export default function Content() {
 
         {/* Tabs */}
         <div 
-          className="md:rounded-[10px] p-3 mb-6 backdrop-blur-md border border-white border-opacity-20 shadow-lg"
+          className="md:rounded-[10px] p-3 mb-6"
           style={{ 
-            backgroundColor: `${primaryColor}40`,
+            backgroundColor: `${primaryColor}`,
           }}
         >
           <div className="flex gap-8 p-2">

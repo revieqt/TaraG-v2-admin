@@ -8,7 +8,6 @@ import { MdLogout } from "react-icons/md";
 import { useState, useRef } from "react";
 import { calculateAge } from "@/utils/calculateAge";
 import { formatDateToString } from "@/utils/formatDateToString";
-import GradientBlobs from "@/components/GradientBlobs";
 import ProfileImage from "@/components/ProfileImage";
 
 export default function Profile() {
@@ -79,7 +78,6 @@ export default function Profile() {
       style={{ backgroundColor }}
       className="min-h-screen pt-2 md:p-6 md:pt-2"
     >
-      <GradientBlobs/>
       <div className="max-w-7xl mx-auto z-10 relative">
         {/* Header with User Info and Logout Button */}
         <div
@@ -143,14 +141,12 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* Tabs */}
         <div
-          className="md:rounded-[10px] p-3 mb-6 backdrop-blur-md border border-white border-opacity-20 shadow-lg"
+          className="md:rounded-[10px] p-3 mb-6"
           style={{ 
-            backgroundColor: `${primaryColor}40`,
+            backgroundColor: `${primaryColor}`,
           }}
         >
-          {/* Tab Navigation */}
           <div className="flex gap-8 p-2">
             {tabs.map((tab) => (
               <button

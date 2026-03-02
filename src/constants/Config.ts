@@ -1,4 +1,4 @@
-export const BACKEND_URL = "http://192.168.68.109:5000";
+export const BACKEND_URL = "http://localhost:5000";
 
 export const DEFAULT_AREA_CODES = [
   { label: '🇵🇭 +63', value: '+63' },   // Philippines
@@ -38,7 +38,6 @@ export const DEFAULT_AREA_CODES = [
   { label: '🇸🇦 +966', value: '+966' }, // Saudi Arabia
   { label: '🇦🇪 +971', value: '+971' }, // UAE
 ];
-
 
 export const GENDER_OPTIONS = [
   { label: 'Male', value: 'male' },

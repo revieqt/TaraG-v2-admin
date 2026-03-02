@@ -94,10 +94,9 @@ const NavBar: React.FC = () => {
 
       {/* Sidebar */}
       <nav
-        style={{ 
-          backgroundColor: `${backgroundColor}40`,
-          borderColor: `${backgroundColor}60`,
+        style={{
           width: isOpen ? '240px' : '76px',
+          backgroundColor: `${backgroundColor}`,
         }}
         className={`
           ${isMobile ? 'fixed' : 'static'}
@@ -110,8 +109,6 @@ const NavBar: React.FC = () => {
           px-3
           flex flex-col
           overflow-hidden
-          ${isMobile ? 'backdrop-blur-xl' : 'backdrop-blur-md'}
-          border-r border-white border-opacity-20 shadow-lg
         `}
       >
         {/* Logo/Title - Hide on collapsed desktop */}

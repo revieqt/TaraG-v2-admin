@@ -1,6 +1,5 @@
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useSession } from "@/context/SessionContext";
-import GradientBlobs from "@/components/GradientBlobs";
 import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 export default function Dashboard() {
@@ -44,7 +43,6 @@ export default function Dashboard() {
       style={{ backgroundColor }}
       className="min-h-screen pt-2 md:p-6 md:pt-2"
     >
-      <GradientBlobs />
       <div className="max-w-7xl mx-auto z-10 relative">
         {/* Welcome Header */}
         <div className="mb-8 mx-5">
@@ -62,10 +60,9 @@ export default function Dashboard() {
             <div
               key={idx}
               style={{
-                backgroundColor: `${primaryColor}40`,
-                borderColor: `${primaryColor}60`,
+                backgroundColor: `${primaryColor}`,
               }}
-              className="rounded-xl p-4 backdrop-blur-md border shadow-lg"
+              className="rounded-xl p-4"
             >
               <p style={{ color: textColor }} className="text-sm opacity-70 font-poppins">
                 {stat.label}
@@ -82,10 +79,9 @@ export default function Dashboard() {
           {/* DAU Chart */}
           <div
             style={{
-              backgroundColor: `${primaryColor}40`,
-              borderColor: `${primaryColor}60`,
+              backgroundColor: `${primaryColor}`,
             }}
-            className="rounded-xl p-6 backdrop-blur-md border shadow-lg"
+            className="rounded-xl p-6"
           >
             <h2 style={{ color: textColor }} className="text-xl font-bold font-poppins mb-6">
               Daily Active Users (DAU)
@@ -121,10 +117,9 @@ export default function Dashboard() {
           {/* Feature Usage Chart */}
           <div
             style={{
-              backgroundColor: `${primaryColor}40`,
-              borderColor: `${primaryColor}60`,
+              backgroundColor: `${primaryColor}`,
             }}
-            className="rounded-xl p-6 backdrop-blur-md border shadow-lg flex flex-col"
+            className="rounded-xl p-6 flex flex-col"
           >
             <h2 style={{ color: textColor }} className="text-xl font-bold font-poppins mb-6">
               Feature Usage
